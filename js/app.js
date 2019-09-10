@@ -14,20 +14,21 @@ class Food {
 }
 
 class Snake {
-    constructor(speed=5, height=10){
-      this.x = 5;
-      this.y = 5;
+    constructor(startX=5, startY=5, width=10, height=10, speed=5){
+      this.x = startX;
+      this.y = startY;
       this.height = height;
-      this.width = 10;
+      this.increment = width;
+      this.width = width;
       this.direction = "r";
       this.speed = speed; 
       this.active = false;
-    }
-    activate(){
-        this.active = true;
-    }
-    deactivate(){
-        this.active = false;
+      this.hitbox = {
+          xmin: startX,
+          xmax: startX + width,
+          ymin: startY,
+          ymax: startY + height
+      }
     }
     draw(){
        game.ctx.fillStyle = "limegreen"
@@ -62,6 +63,16 @@ class Snake {
                 this.y += this.speed;
            }
         }
+
+        this.updateHitbox();
+    }
+    updateHitbox(){
+        this.hitbox = {
+            xmin: this.x,
+            xmax: this.x + this.width,
+            ymin: this.y,
+            ymax: this.y + this.height
+        }
     }
     changeDirection(dir){
         if (
@@ -76,8 +87,32 @@ class Snake {
         }
     }
     check(){
-        // this.checkWall();
-        // this.checkFood();
+        if (this.isDead()){
+            game.endGame()
+        };
+        if(this.isEating()){
+            this.eat()
+        };
+    }
+    isDead(){
+        
+    }
+    isEating(){
+        const foodRangeX = [game.food.x, game.food.x + game.food.width]
+        const foodRangeY = [game.food.y, game.food.y + game.food.height]
+        if (
+            (this.x < foodRangeX[0] && this.x + this.increment > foodRangeX[1]) &&
+            (this.y < foodRangeY[0] && this.y + this.height > foodRangeY[1])
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+    }
+    eat(){
+        game.food = null;
+        this.width += this.increment;
+        game.setFood();
     }
 }
 
@@ -97,37 +132,36 @@ const game = {
     food: null,
     ctx: document.querySelector("canvas").getContext("2d"),
     start(){
-        this.food = new Food(25, 25);
+        this.setFood();
         this.player = new Snake();
         this.infoscreen = new Info();
         this.infoscreen.draw();
         startAnimation();
+    },
+    setFood(){
+        const randX = Math.floor(Math.random()*501)
+        const randY = Math.floor(Math.random()*501)
+        this.food = new Food(randX, randY)
     },
     wipe(){
         this.ctx.clearRect(0, 0, 500, 500)
     },
     updateDisplay(){
         this.wipe();
-        this.food.draw();
+        if (this.food) {
+            this.food.draw()
+        }
         this.player.move();
         this.player.draw();
     },
-    endGame(condition){
+    endGame(){
         this.stopAnimation();
-        alert(condition);
+        console.log("DEAD")
     },
     stopAnimation(){
         cancelAnimationFrame(this.animation)
         this.animation = null
     }
-}
-
-function s () {
-    game.stopAnimation();
-}
-
-function g () {
-    startAnimation();
 }
 
 function startAnimation(){

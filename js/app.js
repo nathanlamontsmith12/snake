@@ -4,20 +4,21 @@ class Food {
     constructor(x, y){
         this.x = x;
         this.y = y;
-        this.height = 10;
-        this.length = 10;
+        this.height = 2;
+        this.width = 3;
     }
     draw(){
-        console.log("FOOD DRAW FIRED")
+        game.ctx.fillStyle = "limegreen"
+        game.ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
 
 class Snake {
-    constructor(speed=1, height=10){
-      this.x = 0;
-      this.y = 0;
+    constructor(speed=1, height=5){
+      this.x = 5;
+      this.y = 5;
       this.height = height;
-      this.length = 10;
+      this.width = 10;
       this.direction = "r";
       this.speed = speed; 
       this.active = false;
@@ -29,13 +30,29 @@ class Snake {
         this.active = false;
     }
     draw(){
-        console.log("SNAKE DRAW FIRED")
+       game.ctx.fillStyle = "limegreen"
+       game.ctx.fillRect(this.x, this.y, this.width, this.height)
     }
     move(){
-        console.log("MOVING")
+        if (this.direction == "r") {
+            this.x+=2;
+        }
+        if (this.direction == "l") {
+            this.x-=2;
+        }
+        if (this.direction == "u") {
+            this.y--;
+        }
+        if (this.direction == "d") {
+            this.y++;
+        }
+    }
+    changeDirection(dir){
+        this.direction = dir;
     }
     check(){
-        console.log("CHECKING")
+        // this.checkWall();
+        // this.checkFood();
     }
 }
 
@@ -96,5 +113,11 @@ function startAnimation(){
     }
     game.animation = window.requestAnimationFrame(startAnimation)
 }
+
+document.body.addEventListener("keydown", (evt)=>{
+    if(evt.key.slice(0, 5) === "Arrow"){
+        game.player.changeDirection(evt.key[5].toLowerCase())
+    }
+})
 
 game.start()

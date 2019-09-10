@@ -14,7 +14,7 @@ class Food {
 }
 
 class Snake {
-    constructor(speed=1, height=5){
+    constructor(speed=5, height=10){
       this.x = 5;
       this.y = 5;
       this.height = height;
@@ -35,20 +35,45 @@ class Snake {
     }
     move(){
         if (this.direction == "r") {
-            this.x+=2;
+            if (this.x + this.width >= 500) {
+                this.direction = "d"
+            } else {
+                this.x += this.speed;
+            }
         }
         if (this.direction == "l") {
-            this.x-=2;
+            if (this.x <= 0) {
+                this.direction = "u"
+            } else {
+            this.x -= this.speed;
+            }
         }
         if (this.direction == "u") {
-            this.y--;
+            if (this.y <= 0) {
+                this.direction = "r"
+            } else {
+                this.y -= this.speed;
+            }
         }
         if (this.direction == "d") {
-            this.y++;
+           if (this.y + this.height >= 500) {
+                this.direction = "l"
+           } else {
+                this.y += this.speed;
+           }
         }
     }
     changeDirection(dir){
-        this.direction = dir;
+        if (
+            (this.direction == "d" && dir == "u") || 
+            (this.direction == "u" && dir == "d") || 
+            (this.direction == "r" && dir == "l") || 
+            (this.direction == "l" && dir == "r") 
+            ) {
+                return;
+        } else {
+            this.direction = dir;
+        }
     }
     check(){
         // this.checkWall();

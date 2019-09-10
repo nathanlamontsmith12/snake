@@ -8,8 +8,6 @@ main {
 
 #screen {
     background: black;
-    height: 500px;
-    width: 500px;
     border: 1px solid lime;
     border-radius: 18px;
 }

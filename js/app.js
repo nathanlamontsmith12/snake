@@ -41,6 +41,8 @@ class Snake {
         this.hasEaten = false;
         this.width = w;
         this.height = h;
+        this.moveCount = 0;
+        this.speed = 10 - game.difficulty*3;
     }
     activate(){
         for (let i = 1; i <= 5; i++){
@@ -48,6 +50,9 @@ class Snake {
             this.segments.push(newSeg)
         }
         this.active = true;
+        if (this.speed <= 0) {
+            this.speed = 1;
+        }
     }
     draw(){
         this.segments.forEach(seg => seg.draw())
@@ -110,13 +115,17 @@ class Snake {
         }
     }
     handleNewFrame(){
-        this.move();
-        if (this.checkDeath()){
-            this.active = false;
-        } 
-        if (this.checkEating()){
-            this.hasEaten = true;
-            game.food.eaten = true;
+        this.moveCount++;
+        if (this.moveCount >= this.speed) {
+            this.moveCount = 0;
+            this.move();
+            if (this.checkDeath()){
+                this.active = false;
+            } 
+            if (this.checkEating()){
+                this.hasEaten = true;
+                game.food.eaten = true;
+            }
         }
     }
     checkDeath(){
@@ -156,6 +165,8 @@ class Snake {
 }
 
 const game = {
+    difficulty: 2,
+    // difficulty: int btw. 0 and 3
     player: null,
     animation: null,
     infoscreen: null,

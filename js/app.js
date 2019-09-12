@@ -10,6 +10,7 @@ class Food {
         this.eaten = false;
     }
     draw(){
+        game.ctx.fillStyle = "red"
         game.ctx.fillRect(this.x, this.y, this.width, this.height)
     }
     getCoordinates(){
@@ -25,6 +26,7 @@ class Segment {
         this.height = h;
     }
     draw(){
+        game.ctx.fillStyle = "limegreen"
         game.ctx.fillRect(this.x, this.y, this.width, this.height)
     }
     getCoordinates(){
@@ -35,7 +37,6 @@ class Segment {
 class Snake {
     constructor(w=10, h=10){
         this.segments = [];
-        this.headInd = 0;
         this.direction = "d";
         this.active = false;
         this.hasEaten = false;
@@ -61,15 +62,15 @@ class Snake {
         if (this.active){
             this.addSegment()
             if (!this.hasEaten){
-                this.removeSegment()
+                this.segments.pop()
             } else {
                 this.hasEaten = false;
             }
         }
     }
     addSegment(){
-        let newX = this.segments[this.headInd].x;
-        let newY = this.segments[this.headInd].y; 
+        let newX = this.segments[0].x;
+        let newY = this.segments[0].y; 
         if (this.direction == "r"){
             newX += this.width;
         }
@@ -83,18 +84,7 @@ class Snake {
             newY -= this.width;
         }
         const newSeg = new Segment(newX, newY, this.width, this.height)
-        if(this.headInd === 0) {
-            this.segments.unshift(newSeg)
-        } else {
-            this.segments.push(newSeg)
-        }
-    }
-    removeSegment(){
-        if (this.headInd === 0) {
-            this.segments.pop();
-        } else {
-            this.segments.shift();
-        }
+        this.segments.unshift(newSeg)
     }
     changeDirection(dir){
         if (
@@ -106,12 +96,6 @@ class Snake {
                 return;
         } else {
             this.direction = dir;
-            if (this.direction == "l"){
-                this.headInd = 0;
-            }
-            if (this.direction == "r"){
-                this.headInd = this.segments.length - 1;
-            }
         }
     }
     handleNewFrame(){
@@ -129,7 +113,7 @@ class Snake {
         }
     }
     checkDeath(){
-        const headLoc = this.segments[this.headInd].getCoordinates();
+        const headLoc = this.segments[0].getCoordinates();
        
         // collision w/ walls: 
         if (headLoc[0] > game.ctx.canvas.width || headLoc[0] < 0 || 
@@ -138,10 +122,7 @@ class Snake {
         }
 
         // collision w/ self: 
-        for (let i = 0; i < this.segments.length; i++) {
-            if (i === this.headInd) {
-                continue;
-            }
+        for (let i = 1; i < this.segments.length; i++) {
             const segmentLoc = this.segments[i].getCoordinates();
             if (headLoc[0] === segmentLoc[0] && headLoc[1] === segmentLoc[1]){
                 return true;
@@ -151,11 +132,11 @@ class Snake {
         return false;
     }
     checkEating(){
-        const headLoc = this.segments[this.headInd].getCoordinates();
+        const headLoc = this.segments[0].getCoordinates();
         const foodLoc = game.food.getCoordinates();
         if (headLoc[0] < foodLoc[0] && 
             headLoc[0] + this.width > foodLoc[0] &&
-            headLoc[1] < foodLoc[0] && 
+            headLoc[1] < foodLoc[1] && 
             headLoc[1] + this.height > foodLoc[1]) {
                 return true;
             } else {
@@ -194,8 +175,8 @@ const game = {
         this.player.handleNewFrame();
     },
     updateDisplay(){
-        this.food.draw();
         this.player.draw();
+        this.food.draw();
     },
     endGame(){
         // do some stuff: 

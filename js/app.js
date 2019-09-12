@@ -134,10 +134,10 @@ class Snake {
     checkEating(){
         const headLoc = this.segments[0].getCoordinates();
         const foodLoc = game.food.getCoordinates();
-        if (headLoc[0] < foodLoc[0] && 
-            headLoc[0] + this.width > foodLoc[0] &&
-            headLoc[1] < foodLoc[1] && 
-            headLoc[1] + this.height > foodLoc[1]) {
+        if (headLoc[0] <= foodLoc[0] && 
+            headLoc[0] + this.width >= foodLoc[0] &&
+            headLoc[1] <= foodLoc[1] && 
+            headLoc[1] + this.height >= foodLoc[1]) {
                 return true;
             } else {
                 return false;
